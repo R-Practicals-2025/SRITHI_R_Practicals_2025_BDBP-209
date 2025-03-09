@@ -178,6 +178,114 @@ lines(x, p3, type = "o", col = "green", pch = 18)  # λ = 45
 legend("topright", legend = c("λ = 3", "λ = 20", "λ = 45"),
        col = c("red", "blue", "green"), pch = c(16, 17, 18), lty = 1)
 
+###Q-9
+# Load CSV file
+data <- read.csv("~/Downloads/SOCR-HeightWeight.csv")  
+
+# Extract height and weight variables
+heights <- data$Height
+weights <- data$Weight
+
+# Compute mean and standard deviation
+mean_height <- mean(heights)
+sd_height <- sd(heights)
+
+mean_weight <- mean(weights)
+sd_weight <- sd(weights)
+
+# (i) Histogram of Height
+par(mfrow = c(1, 1))  # Reset layout
+hist(heights, breaks = 30, col = "lightblue", main = "Histogram of Heights",
+     xlab = "Height (cm)", ylab = "Frequency", border = "black")
+cat("Mean Height:", mean_height, "SD Height:", sd_height, "\n")
+
+# (ii) Histogram of Weight
+hist(weights, breaks = 30, col = "lightgreen", main = "Histogram of Weights",
+     xlab = "Weight (kg)", ylab = "Frequency", border = "black")
+cat("Mean Weight:", mean_weight, "SD Weight:", sd_weight, "\n")
+
+# (iii) Gaussian Curve (Z vs P(Z))
+par(mfrow = c(1, 2))  # 1x2 layout
+
+Z <- seq(-3, 3, length.out = 100)
+P_height <- dnorm(Z, mean = 0, sd = 1)
+P_weight <- dnorm(Z, mean = 0, sd = 1)
+
+plot(Z, P_height, type = "l", col = "red", lwd = 2, main = "Standard Normal Curve (Height)",
+     xlab = "Z-score", ylab = "P(Z)")
+plot(Z, P_weight, type = "l", col = "blue", lwd = 2, main = "Standard Normal Curve (Weight)",
+     xlab = "Z-score", ylab = "P(Z)")
+
+# (iv) Effect of Decreasing Bin Size
+par(mfrow = c(1, 3))  # 1x3 grid layout
+
+hist(heights, breaks = 10, col = "lightgray", main = "Bins = 10", xlab = "Height", border = "black")
+hist(heights, breaks = 30, col = "gray", main = "Bins = 30", xlab = "Height", border = "black")
+hist(heights, breaks = 100, col = "darkgray", main = "Bins = 100", xlab = "Height", border = "black")
+
+par(mfrow = c(1, 1))  # Reset layout
+
+# (11) Plot the PDF and CPDF for the exponential distribution with λ = 10. Shade the region
+# under the PDF up to x = 2.8.
+
+
+exp_pdf <- function(x, lambda=10) {
+  ifelse(x >= 0, lambda * exp(-lambda * x), 0)
+}
+
+exp_cpdf <- function(x, lambda=10) {
+  ifelse(x >= 0, 1 - exp(-lambda * x), 0)
+}
+
+x_vals <- seq(0, 1, 0.01)
+pdf_vals <- exp_pdf(x_vals)
+cpdf_vals <- exp_cpdf(x_vals)
+
+plot(x_vals, pdf_vals, type="l", col="blue", lwd=2, main="Exponential PDF (lambda=10)", xlab="x", ylab="Density")
+polygon(c(0, seq(0, 2.8, 0.01), 2.8), c(0, exp_pdf(seq(0, 2.8, 0.01)), 0), col=rgb(0, 0, 1, 0.2))
+
+plot(x_vals, cpdf_vals, type="l", col="red", lwd=2, main="Exponential CPDF (lambda=10)", xlab="x", ylab="Probability")
+
+
+#(12) Plot the PDF and CPDF for the Gamma distribution with α = 5 and θ = 3.
+
+
+gamma_pdf <- function(x, alpha=5, theta=3) {
+  ifelse(x > 0, (x^(alpha-1) * exp(-x/theta)) / (theta^alpha * gamma(alpha)), 0)
+}
+
+gamma_cpdf <- function(x, alpha=5, theta=3) {
+  pgamma(x, shape=alpha, scale=theta)
+}
+
+x_vals <- seq(0, 40, 0.1)
+pdf_vals <- gamma_pdf(x_vals)
+cpdf_vals <- gamma_cpdf(x_vals)
+
+plot(x_vals, pdf_vals, type="l", col="blue", lwd=2, main="Gamma PDF (alpha=5, theta=3)", xlab="x", ylab="Density")
+plot(x_vals, cpdf_vals, type="l", col="red", lwd=2, main="Gamma CPDF (alpha=5, theta=3)", xlab="x", ylab="Probability")
+
+
+#(13) Plot the PDF and CPDF for the Chi-square distribution for 20 degrees of freedom. Shade
+#the region under the PDF up to x = 1.0.
+
+chisq_pdf <- function(x, df=20) {
+  ifelse(x > 0, (x^(df/2 - 1) * exp(-x/2)) / (2^(df/2) * gamma(df/2)), 0)
+}
+
+chisq_cpdf <- function(x, df=20) {
+  pchisq(x, df=df)
+}
+
+x_vals <- seq(0, 50, 0.1)
+pdf_vals <- chisq_pdf(x_vals)
+cpdf_vals <- chisq_cpdf(x_vals)
+
+plot(x_vals, pdf_vals, type="l", col="blue", lwd=2, main="Chi-Square PDF (df=20)", xlab="x", ylab="Density")
+polygon(c(0, seq(0, 1.0, 0.01), 1.0), c(0, chisq_pdf(seq(0, 1.0, 0.01)), 0), col=rgb(0, 0, 1, 0.2))
+
+plot(x_vals, cpdf_vals, type="l", col="red", lwd=2, main="Chi-Square CPDF (df=20)", xlab="x", ylab="Probability")
+
 
 
 
